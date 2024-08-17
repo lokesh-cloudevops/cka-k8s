@@ -13,7 +13,7 @@ This command taints node1 with the key "gpu" and the effect "NoSchedule." Pods w
 
 To remove the taint , you add - at the end of the command , like below.
 
-"kubectl taint nodes node1 key=gpu:NoSchedule-"
+'''kubectl taint nodes node1 key=gpu:NoSchedule-'''
 
 Adding toleration to the pod: 
 
