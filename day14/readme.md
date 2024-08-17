@@ -7,13 +7,13 @@ Tolerations: Permission Slips for Pods ✅ Toleration allows a pod to say, "Hey,
 Taints & Tolerations in Action 🎬 Here’s a breakdown of the commands to manage taints and tolerations:
 
 Tainting a Node: 
-"kubectl taint nodes node1 key=gpu:NoSchedule"
+```kubectl taint nodes node1 key=gpu:NoSchedule```
 
 This command taints node1 with the key "gpu" and the effect "NoSchedule." Pods without a toleration for this taint won't be scheduled there.
 
 To remove the taint , you add - at the end of the command , like below.
 
-'''kubectl taint nodes node1 key=gpu:NoSchedule-'''
+kubectl taint nodes node1 key=gpu:NoSchedule-
 
 Adding toleration to the pod: 
 
