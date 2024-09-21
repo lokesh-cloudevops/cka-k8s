@@ -41,3 +41,5 @@ Authentication verifies your identity.
 Authorization determines your access level.
 RBAC is a user-friendly and recommended way to manage authorization.
 Keep exploring, Kubernetes ninjas! There's more to discover in the video about configuring authentication and authorization in your cluster.
+
+![alt text](image-1.png)
