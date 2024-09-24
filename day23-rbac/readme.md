@@ -1,4 +1,6 @@
-RBAC:
+![alt text](image.png)
+
+#### RBAC:
 
 kubectl autho can-i get pod
 kubectl auth whoami
