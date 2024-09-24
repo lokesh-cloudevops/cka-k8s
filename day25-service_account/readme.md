@@ -4,15 +4,10 @@
 
 ## Create service account
 
+```
 kubectl create sa build-sa
 kubectl describe sa build-sa
-
-
-
-### Service account in Kubernetes
-
-(https://github.com/user-attachments/assets/7fec4f33-1643-4533-be5a-10a6b305d14c)
-
+```
 
 #### What is a service account in Kubernetes
 
