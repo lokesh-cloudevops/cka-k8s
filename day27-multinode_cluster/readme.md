@@ -64,13 +64,17 @@ sysctl net.bridge.bridge-nf-call-iptables net.bridge.bridge-nf-call-ip6tables ne
 
 ```
 curl -LO https://github.com/containerd/containerd/releases/download/v1.7.14/containerd-1.7.14-linux-amd64.tar.gz
+
 sudo tar Cxzvf /usr/local containerd-1.7.14-linux-amd64.tar.gz
+
 curl -LO https://raw.githubusercontent.com/containerd/containerd/main/containerd.service
+
 sudo mkdir -p /usr/local/lib/systemd/system/
 sudo mv containerd.service /usr/local/lib/systemd/system/
 sudo mkdir -p /etc/containerd
 containerd config default | sudo tee /etc/containerd/config.toml
 sudo sed -i 's/SystemdCgroup \= false/SystemdCgroup \= true/g' /etc/containerd/config.toml
+
 sudo systemctl daemon-reload
 sudo systemctl enable --now containerd
 
@@ -82,6 +86,7 @@ systemctl status containerd
 
 ```
 curl -LO https://github.com/opencontainers/runc/releases/download/v1.1.12/runc.amd64
+
 sudo install -m 755 runc.amd64 /usr/local/sbin/runc
 ```
 
@@ -89,6 +94,7 @@ sudo install -m 755 runc.amd64 /usr/local/sbin/runc
 
 ```
 curl -LO https://github.com/containernetworking/plugins/releases/download/v1.5.0/cni-plugins-linux-amd64-v1.5.0.tgz
+
 sudo mkdir -p /opt/cni/bin
 sudo tar Cxzvf /opt/cni/bin cni-plugins-linux-amd64-v1.5.0.tgz
 ```
@@ -112,6 +118,9 @@ kubectl version --client
 ```
 >Note: The reason we are installing 1.29, so that in one of the later task, we can upgrade the cluster to 1.30
 
+containerd is runtime
+crictl is client (as same as docker)
+
 8) Configure `crictl` to work with `containerd`
 
 `sudo crictl config runtime-endpoint unix:///var/run/containerd/containerd.sock`
@@ -121,7 +130,15 @@ kubectl version --client
 ```
 sudo kubeadm init --pod-network-cidr=192.168.0.0/16 --apiserver-advertise-address=172.31.89.68 --node-name master
 ```
->Note: Copy the copy to the notepad that was generated after the init command completion, we will use that later.
+>Note: Replace public ip address of master node instead of 172.31.89.68. Copy the kubeadm join token to the notepad that was generated after the init command completion, we will use that later.
+
+#If you face any issues initializing master use method instead of direct ip mentioning. Set environment variable for ip address.
+
+```
+IPADDR=$(curl ifconfig.me && echo "")    
+
+sudo kubeadm init --pod-network-cidr=192.168.0.0/16 --apiserver-advertise-address=$IPADDR --node-name master
+```
 
 10) Prepare `kubeconfig`
 
@@ -130,7 +147,7 @@ mkdir -p $HOME/.kube
 sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
 ```
-11) Install calico 
+11) Install calico pod networking
 
 ```bash
 kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.28.0/manifests/tigera-operator.yaml
@@ -177,3 +194,29 @@ Where ens5 is your default interface, you can confirm by running `ifconfig` on a
 
 This is not the latest version of calico though(v.3.25). This deploys CNI in kube-system NS. 
 
+### Kubernetes cluster important configurations
+
+![alt text](image-4.png)
+
+
+### Process of kubeadm init
+
+![alt text](image-5.png)
+
+### Errors in worker node
+
+![alt text](image-3.png)
+
+# Solution:
+
+cat $HOME/.kube/config        --copy from MASTER node whole content
+sudo vi $HOME/.kube/config     --create config file and paste whole content in WORKER node.
+
+>Note: If still won't work then give file permissions in worker node as shown below:
+chmod 775 $HOME/.kube/config
+chmod 775 $HOME/.kube/kubelet.conf
+
+
+### Reference
+
+https://devopscube.com/setup-kubernetes-cluster-kubeadm/
